@@ -1,5 +1,6 @@
 # Import libraries
 import pgzrun
+import random
 
 # Set up the screen
 WIDTH = 1200
@@ -39,7 +40,27 @@ def update():
         
     # Move the meteor image to the left
     meteor.x -= 5
-    if meteor.right < 1:             # Reset the meteor image position
+    
+    # Reset the meteor image position
+    if meteor.right < 1:             
         meteor.left = 1200
+        meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+        
+    # Checkibg collision between the aircraft and the meteor
+    if meteor.colliderect(aircraft):
+        
+        # Reset the meteor position
+        meteor.x = 1200
+        meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+    
+    # Move the aircraft up and down    
+    if keyboard.down:
+        if aircraft.y < 650:    # Limit bottom movement
+            aircraft.y += 10
+            
+    elif keyboard.up:
+        if aircraft.y > 150:    # Limit top movement
+            aircraft.y -= 10
+       
 # Run the game
 pgzrun.go()
