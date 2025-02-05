@@ -8,6 +8,7 @@ HEIGHT = 800
 
 # Set up initial values
 i = 1
+j = 1
 lives = 2
 score = 0
 level = 1
@@ -23,6 +24,8 @@ aircraft = Actor('aircraft.png', (100, 400))
 # Load image of the obstacle
 meteor = Actor('ulka2.png', (1200, 400))
 
+heart = Actor('heart.png', (5000,600))
+
 # Define the draw function
 def draw():
     screen.clear()
@@ -32,6 +35,7 @@ def draw():
         background_2.draw()    
         aircraft.draw()       
         meteor.draw()           
+        heart.draw()
         
         # Display the score, lives and level
         screen.draw.text(f"Score: {score}", color="White", topleft=(10, 20), fontsize=40)
@@ -46,7 +50,7 @@ def draw():
         
 # Define the update function   
 def update():
-    global lives, score, level, speed
+    global lives, score, level, speed, j
     
     # Stopping the game when game is over
     if lives == 0:
@@ -70,7 +74,16 @@ def update():
     if meteor.right < 1:             
         meteor.left = 1200
         meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+       
         score += 1      # Increase the score by 1
+        
+    # Move the heart image to the left
+    heart.x -= 5
+        
+    # Reset the heart image position
+    if heart.right < 1:
+        heart.left = 4000 * j
+        heart.y = random.randint(150, 650)
         
     # Checkibg collision between the aircraft and the meteor
     if meteor.colliderect(aircraft):
@@ -78,8 +91,21 @@ def update():
         # Reset the meteor position
         meteor.x = 1200
         meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+        
         lives -= 1      # Reduce the lives by 1
         
+    # Checking collision between the aircraft and heart
+    if heart.colliderect(aircraft):
+        j += 1    # Increase the heart psotion of x-axis
+        
+        # Reset the heart position
+        heart.x = 4000 * j
+        heart.y = random.randint(150, 650)
+        
+        # Increase the lives by 1 when lives are less than 5
+        if lives > 5:
+            lives += 1      
+
     # Move the aircraft up and down    
     if keyboard.down:
         if aircraft.y < 650:    # Limit bottom movement
