@@ -1,3 +1,5 @@
+# CO1010
+
 # Import libraries
 import pgzrun
 import random
@@ -9,7 +11,7 @@ HEIGHT = 800
 # Set up initial values
 i = 1
 j = 1
-lives = 3
+lives = 300
 score = 0
 level = 1
 speed = 5 * i
@@ -24,31 +26,32 @@ button_restart = Rect((140, 615), (385, 85))
 button_menu = Rect((675, 615), (385, 85))
 
 # Load the menu image
-menu = Actor('gameinte.png', (600, 400))
+menu = Actor('gameinte.png', (WIDTH // 2, 400))
 
 # Load the background images
-background_1 = Actor('mm.png', (600, 400))
+background_1 = Actor('mm.png', (WIDTH // 2, 400))
 background_2 = Actor('mm.png', (1800, 400))
 
 # Load image of the aircraft
-aircraft = Actor('aircraft.png', (400, 100))
+aircraft = Actor('aircraft.png', (100, 400))
 
 # Load image of the obstacle
-meteor = Actor('ulka2.png', (1200, 400))
-meteor2 = Actor('ulka2.png', (meteor.x + 900, 400))
+meteor = Actor('ulka2.png', (WIDTH, 400))
+meteor2 = Actor('ulka2.png', (WIDTH + 900, 400))
+#stone = Actor('555.png')
 
-# Load image of the heart 
-heart = Actor('heart.png', (5000,600))
+# Load image of the fuel 
+fuel = Actor('fuel.png', (5000,600))
 
 # Load game over image
-game_over = Actor('over.png', (600, 400))
+game_over = Actor('over.png', (WIDTH // 2, 400))
 
 # Reset initial values  
 def reset_game():
     global i, j, lives, score, level, speed, start, show_info
     i = 1
     j = 1
-    lives = 3
+    lives = 300
     score = 0
     level = 1
     speed = 5 * i
@@ -75,13 +78,13 @@ def draw():
             aircraft.draw()       
             meteor.draw()
             meteor2.draw()           
-            heart.draw()
+            fuel.draw()
         
             # Display the score, lives and level
             screen.draw.text(f"Score: {score}", color="White", topleft=(10, 20), fontsize=40)
             screen.draw.text(f"Lives: {lives}", color="White", topleft=(10, 50), fontsize=40)
             screen.draw.text(f"LEVEL: {level}", (500, 20), color="White", fontsize=100)
-    
+                
         elif lives == 0:
             # Display the game over message and final score
             game_over.draw()
@@ -93,7 +96,6 @@ def draw():
 # Define the function to handle mouse cliks
 def on_mouse_down(pos):
     global start, show_info
-    
     
     if button_start.collidepoint(pos):
         start = True
@@ -131,14 +133,18 @@ def update():
         return
     
     # Increace the level with respect to scrore
-    if score == 5 * i:
+    if score == 2 * i:
         i += 1
         level += 1
         
-        if speed < 20:
-            speed = 4 * i
+        if i < 4:
+            speed = 5 * i
+            
         else:
-            speed == 20
+            speed = 10
+            
+
+            
         
     # Move the background_1 image to the left
     background_1.x -= 5
@@ -171,13 +177,15 @@ def update():
        
         score += 1      # Increase the score by 1
         
-    # Move the heart image to the left
-    heart.x -= 5
+    # Move the fuel image to the left
+    fuel.x -= speed
         
-    # Reset the heart image position
-    if heart.right < 1:
-        heart.left = 4000 * j
-        heart.y = random.randint(150, 650)
+    # Reset the fuel image position
+    if fuel.right < 1:
+        fuel.left = 4000 * j
+        fuel.y = random.randint(150, 650)
+        
+
         
     # Checkibg collision between the aircraft and the meteor
     if meteor.colliderect(aircraft):
@@ -200,12 +208,12 @@ def update():
         lives -= 1      # Reduce the lives by 1
         
     # Checking collision between the aircraft and heart
-    if heart.colliderect(aircraft):
+    if fuel.colliderect(aircraft):
         j += 1    # Increase the heart psotion of x-axis
         
         # Reset the heart position
-        heart.x = 4000 * j
-        heart.y = random.randint(150, 650)
+        fuel.x = 4000 * j
+        fuel.y = random.randint(150, 650)
         
         # Increase the lives by 1 when lives are less than 5
         if lives > 5:
