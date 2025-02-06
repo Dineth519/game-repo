@@ -13,13 +13,22 @@ lives = 200
 score = 0
 level = 1
 speed = 5 * i
+start = False
+show_info = False
+
+# Draw rectangles for start and info buttons in menu
+button_start = Rect((405, 480), (385, 85))
+button_info = Rect((405, 635), (385, 85))
+
+# Load the menu image
+menu = Actor('gameinte.png', (600, 400))
 
 # Load the background images
 background_1 = Actor('mm.png', (600, 400))
 background_2 = Actor('mm.png', (1800, 400))
 
 # Load image of the aircraft
-aircraft = Actor('aircraft.png', (100, 100))
+aircraft = Actor('aircraft.png', (400, 100))
 
 # Load image of the obstacle
 meteor = Actor('ulka2.png', (1200, 400))
@@ -30,24 +39,47 @@ heart = Actor('heart.png', (5000,600))
 # Define the draw function
 def draw():
     screen.clear()
-    if lives > 0:
-        # Draw the images
-        background_1.draw()    
-        background_2.draw()    
-        aircraft.draw()       
-        meteor.draw()
-        meteor2.draw()           
-        heart.draw()
-        
-        # Display the score, lives and level
-        screen.draw.text(f"Score: {score}", color="White", topleft=(10, 20), fontsize=40)
-        screen.draw.text(f"Lives: {lives}", color="White", topleft=(10, 50), fontsize=40)
-        screen.draw.text(f"LEVEL: {level}", (500, 20), color="White", fontsize=100)
     
-    elif lives == 0:
-       # Display the game over message and final score
-        screen.draw.text("GAME OVER", color="Red", center=(600, 400), fontsize=200)
-        screen.draw.text(f"Final Score: {score}", color="Yellow", center=(600, 700), fontsize=70)
+    # Set up the menu
+    if not start and not show_info:
+        menu.draw()
+        screen.draw.rect(button_start, 'black')
+        screen.draw.rect(button_info, 'black')
+        screen.draw.text("Start Game", center=button_start.center, color='black', fontsize=50)
+        screen.draw.text("Show Info", center=button_info.center, color='black', fontsize=50)
+      
+    # Start the game
+    elif start == True:
+        if lives > 0:
+            # Draw the images
+            background_1.draw()    
+            background_2.draw()    
+            aircraft.draw()       
+            meteor.draw()
+            meteor2.draw()           
+            heart.draw()
+        
+            # Display the score, lives and level
+            screen.draw.text(f"Score: {score}", color="White", topleft=(10, 20), fontsize=40)
+            screen.draw.text(f"Lives: {lives}", color="White", topleft=(10, 50), fontsize=40)
+            screen.draw.text(f"LEVEL: {level}", (500, 20), color="White", fontsize=100)
+    
+        elif lives == 0:
+            # Display the game over message and final score
+            screen.draw.text("GAME OVER", color="Red", center=(600, 400), fontsize=200)
+            screen.draw.text(f"Final Score: {score}", color="Yellow", center=(600, 700), fontsize=70)
+
+# Define the function to handle mouse cliks
+def on_mouse_down(pos):
+    global start, show_info
+    
+    if button_start.collidepoint(pos):
+        start = True
+        show_info = False
+        
+    if button_info.collidepoint(pos):
+        start = False
+        show_info = True
 
 # Define the function to get x coordinate of meteors
 def get_x(meteor):
@@ -59,7 +91,10 @@ def get_x(meteor):
         
 # Define the update function   
 def update():
-    global lives, score, level, speed, i, j
+    global lives, score, level, speed, i, j, start , show_info
+    
+    if not start and not show_info:
+        return
     
     # Stopping the game when game is over
     if lives == 0:
