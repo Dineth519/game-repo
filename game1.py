@@ -9,7 +9,7 @@ HEIGHT = 800
 # Set up initial values
 i = 1
 j = 1
-lives = 2
+lives = 200
 score = 0
 level = 1
 speed = 5 * i
@@ -19,10 +19,11 @@ background_1 = Actor('mm.png', (600, 400))
 background_2 = Actor('mm.png', (1800, 400))
 
 # Load image of the aircraft
-aircraft = Actor('aircraft.png', (100, 400))
+aircraft = Actor('aircraft.png', (100, 100))
 
 # Load image of the obstacle
 meteor = Actor('ulka2.png', (1200, 400))
+meteor2 = Actor('ulka2.png', (meteor.x + 900, 400))
 
 heart = Actor('heart.png', (5000,600))
 
@@ -34,7 +35,8 @@ def draw():
         background_1.draw()    
         background_2.draw()    
         aircraft.draw()       
-        meteor.draw()           
+        meteor.draw()
+        meteor2.draw()           
         heart.draw()
         
         # Display the score, lives and level
@@ -46,7 +48,14 @@ def draw():
        # Display the game over message and final score
         screen.draw.text("GAME OVER", color="Red", center=(600, 400), fontsize=200)
         screen.draw.text(f"Final Score: {score}", color="Yellow", center=(600, 700), fontsize=70)
+
+# Define the function to get x coordinate of meteors
+def get_x(meteor):
+    if meteor == meteor:
+        return meteor.x
     
+    elif meteor == meteor2:
+        return meteor2.x
         
 # Define the update function   
 def update():
@@ -72,8 +81,18 @@ def update():
     
     # Reset the meteor image position
     if meteor.right < 1:             
-        meteor.left = 1200
+        meteor.left = 1800
         meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+       
+        score += 1      # Increase the score by 1
+        
+    # Move the meteor image to the left
+    meteor2.x -= 5
+        
+    # Reset the meteor2 image position
+    if meteor2.right < 1:             
+        meteor2.left = 1800
+        meteor2.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
        
         score += 1      # Increase the score by 1
         
@@ -89,8 +108,19 @@ def update():
     if meteor.colliderect(aircraft):
         
         # Reset the meteor position
-        meteor.x = 1200
+        meteor2_x = get_x(meteor2)      # Get x coordinate of meteor2
+        meteor.x = meteor2_x + 900
         meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
+        
+        lives -= 1      # Reduce the lives by 1
+        
+    # Checkibg collision between the aircraft and the meteor2
+    if meteor2.colliderect(aircraft):
+        
+        # Reset the meteor2 position
+        meteor_x = get_x(meteor)        # Get x coordinate of meteor
+        meteor2.x = meteor_x + 900
+        meteor2.y = random.randint(150, 650)     # Randomize the meteor2 position of y-axis
         
         lives -= 1      # Reduce the lives by 1
         
