@@ -5,6 +5,7 @@
 import pgzrun
 import random
 
+
 # Set up the screen
 WIDTH = 1200
 HEIGHT = 800
@@ -17,14 +18,13 @@ score = 0
 level = 1
 speed = 6
 start = False
-show_info = False
 
 # Draw rectangles for start and info buttons in menu
 button_start = Rect((405, 480), (385, 85))
-button_info = Rect((405, 635), (385, 85))
+button_exit = Rect((405, 635), (385, 85))
 
 # Draw rectangle for buttons shown after the game over
-button_restart = Rect((140, 615), (385, 85))
+button_reset = Rect((140, 615), (385, 85))
 button_menu = Rect((675, 615), (385, 85))
 
 # Load the menu image
@@ -51,31 +51,30 @@ game_over = Actor("game_over.png", (WIDTH // 2, HEIGHT // 2))
 
 # Reset initial values  
 def reset_game():
-    global i, j, lives, score, level, speed, start, show_info
+    global i, j, lives, score, level, speed, start
     i = 1
     j = 1
     lives = 5
     score = 0
     level = 1
     speed = 6
-    show_info = False  
 
 # Define the draw function
 def draw():
     screen.clear()
     
     # Set up the menu
-    if not start and not show_info:
+    if not start:
         menu.draw()
         screen.draw.rect(button_start, 'black')
-        screen.draw.rect(button_info, 'black')
+        screen.draw.rect(button_exit, 'black')
         screen.draw.text("Start Game", center=button_start.center, color='black', fontsize=50)
-        screen.draw.text("Show Info", center=button_info.center, color='black', fontsize=50)
+        screen.draw.text("Exit the Game", center=button_exit.center, color='black', fontsize=50)
  
     # Start the game
     elif start:
         if lives > 0:
-            # Draw the images
+            # Draw the images of the game
             background_1.draw()    
             background_2.draw()    
             aircraft.draw()       
@@ -98,30 +97,28 @@ def draw():
             game_over.draw()
             screen.draw.text("GAME OVER", color="Red", center=(600, 200), fontsize=200)
             screen.draw.text(f"Final Score: {score}", color="Black", center=(600, 400), fontsize=70)
-            screen.draw.text("Play Again", center=button_restart.center, color='black', fontsize=50)
+            screen.draw.text("Play Again", center=button_reset.center, color='black', fontsize=50)
             screen.draw.text("Go to menu", center=button_menu.center, color='black', fontsize=50)
        
 # Define the function to handle mouse cliks
 def on_mouse_down(pos):
-    global start, show_info
+    global start
     
     if button_start.collidepoint(pos):
         start = True
-        show_info = False
         play_music()        # Play the background music
-        
-    elif button_info.collidepoint(pos):
-        start = False
-        show_info = True
-        
-    if button_restart.collidepoint(pos):
-        reset_game()
+     
+    elif button_reset.collidepoint(pos):
+        reset_game()        # Reset the game
         start = True
         play_music()        # Play the background music
         
     elif button_menu.collidepoint(pos):
         reset_game()
         start = False
+        
+    elif button_exit.collidepoint(pos):
+        exit()      # Exit the game
 
 # Define the function to take x-coordinate of meteors
 def get_x(meteor):
@@ -132,10 +129,10 @@ def get_x(meteor):
         
 # Define the update function   
 def update():
-    global lives, score, level, speed, i, j, start , show_info
+    global lives, score, level, speed, i, j, start
     
     # Stopping the start of the game in the mune
-    if not start and not show_info:
+    if not start:
         return
     
     # Stopping the game after game is over
