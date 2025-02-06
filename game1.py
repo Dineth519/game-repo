@@ -59,12 +59,22 @@ def get_x(meteor):
         
 # Define the update function   
 def update():
-    global lives, score, level, speed, j
+    global lives, score, level, speed, i, j
     
     # Stopping the game when game is over
     if lives == 0:
         return
     
+    # Increace the level with respect to scrore
+    if score == 5 * i:
+        i += 1
+        level += 1
+        
+        if speed < 20:
+            speed = 4 * i
+        else:
+            speed == 20
+        
     # Move the background_1 image to the left
     background_1.x -= 5
     
@@ -77,7 +87,7 @@ def update():
         background_2.left = 1200
         
     # Move the meteor image to the left
-    meteor.x -= 5
+    meteor.x -= speed
     
     # Reset the meteor image position
     if meteor.right < 1:             
@@ -87,7 +97,7 @@ def update():
         score += 1      # Increase the score by 1
         
     # Move the meteor image to the left
-    meteor2.x -= 5
+    meteor2.x -= speed
         
     # Reset the meteor2 image position
     if meteor2.right < 1:             
@@ -108,7 +118,7 @@ def update():
     if meteor.colliderect(aircraft):
         
         # Reset the meteor position
-        meteor2_x = get_x(meteor2)      # Get x coordinate of meteor2
+        meteor2_x = get_x(meteor2)      # Get x coordinate of meteor2 
         meteor.x = meteor2_x + 900
         meteor.y = random.randint(150, 650)     # Randomize the meteor position of y-axis
         
