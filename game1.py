@@ -12,9 +12,9 @@ HEIGHT = 800
 
 # Set up initial values
 i = 1
-j = 1
 lives = 5
 score = 0
+count = 0
 level = 1
 speed = 6
 start = False
@@ -31,11 +31,11 @@ button_menu = Rect((675, 615), (385, 85))
 menu = Actor("menu_image.png", (WIDTH // 2, HEIGHT // 2))
 
 # Load the background images
-background_1 = Actor("background.png", (WIDTH // 2, HEIGHT // 2))
-background_2 = Actor("background.png", (WIDTH // 2 + WIDTH, HEIGHT // 2))
+background_1 = Actor("background_1.png", (1760 // 2, HEIGHT // 2))
+background_2 = Actor("background_2.png", (1760 // 2 + 1760, HEIGHT // 2))
 
 # Load image of the aircraft
-aircraft = Actor("aircraft.png", (100, HEIGHT // 2))
+aircraft = Actor("air.png", (150, HEIGHT // 2))
 
 # Load image of the obstacle
 meteor_1 = Actor("meteor.png", (WIDTH, HEIGHT // 2))
@@ -44,18 +44,21 @@ stone_1 = Actor("stone.png", (WIDTH + 450, HEIGHT // 2))
 stone_2 = Actor("stone.png", (WIDTH + 1350, HEIGHT // 2))
 
 # Load image of the fuel tank 
-fuel = Actor("fuel_tank.png", (5000,600))
+fuel = Actor("fuel_tank.png", (5000, random.randint(150, 650)))
+
+# Load image of star
+star = Actor("star.png", (2000, random.randint(150, 650)))
 
 # Load game over image
 game_over = Actor("game_over.png", (WIDTH // 2, HEIGHT // 2))
 
 # Reset initial values  
 def reset_game():
-    global i, j, lives, score, level, speed, start
+    global i, lives, score, count, level, speed, start
     i = 1
-    j = 1
     lives = 5
     score = 0
+    count = 0
     level = 1
     speed = 6
 
@@ -81,6 +84,7 @@ def draw():
             meteor_1.draw()
             meteor_2.draw()           
             fuel.draw()
+            star.draw()
             if i > 3:       # Draw the image of stone_1 after passing level 3
                 stone_1.draw()
             if i > 4:       # Draw the image of stone_2 after passing level 4
@@ -95,8 +99,8 @@ def draw():
             music.stop()        # Stop the music
             # Display the game over message and final score
             game_over.draw()
-            screen.draw.text("GAME OVER", color="Red", center=(600, 200), fontsize=200)
-            screen.draw.text(f"Final Score: {score}", color="Black", center=(600, 400), fontsize=70)
+            screen.draw.text("MISSION FAIL", color="Red", center=(WIDTH // 2, 250), fontsize=200)
+            screen.draw.text(f"FINAL SCORE: {score}", color="Black", center=(WIDTH // 2, 400), fontsize=90)
             screen.draw.text("Play Again", center=button_reset.center, color='black', fontsize=50)
             screen.draw.text("Go to menu", center=button_menu.center, color='black', fontsize=50)
        
@@ -129,7 +133,7 @@ def get_x(meteor):
         
 # Define the update function   
 def update():
-    global lives, score, level, speed, i, j, start
+    global lives, score, count, level, speed, i, start
     
     # Stopping the start of the game in the mune
     if not start:
@@ -140,7 +144,7 @@ def update():
         return
     
     # Increace the level with respect to scrore
-    if score == 5 * i:
+    if count == 5 * i:
         i += 1
         level += 1      
         
@@ -154,13 +158,13 @@ def update():
     background_1.x -= 5
     
     if background_1.right < 1:       # Reset the background_1 image position
-        background_1.left = 1200
+        background_1.left = 1760
     
     # Move the background_2 image to the left
     background_2.x -= 5
     
     if background_2.right < 1:       # Reset the background_2 image position
-        background_2.left = 1200
+        background_2.left = 1760
         
     # Move the meteor_1 image to the left
     meteor_1.x -= speed
@@ -168,7 +172,8 @@ def update():
     if meteor_1.right < 1:        # Reset the meteor_1 image position             
         meteor_1.left = 1800
         meteor_1.y = random.randint(150, 650)     # Randomize the y-coordinate of the mateor_1
-        score += 1      # Increase the score by 1
+        score += 2      # Increase the score by 2
+        count += 1      # Increase the count by 1
         
     # Move the meteor_2 image to the left
     meteor_2.x -= speed
@@ -176,13 +181,14 @@ def update():
     if meteor_2.right < 1:       # Reset the meteor_2 image position             
         meteor_2.left = 1800
         meteor_2.y = random.randint(150, 650)     # Randomize the y-coordinate of the mateor_2
-        score += 1      # Increase the score by 1
+        score += 2      # Increase the score by 2
+        count += 1      # Increase the count by 1
         
     # Move the fuel image to the left
     fuel.x -= speed
 
     if fuel.right < 1:      # Reset the fuel image position
-        fuel.left = 4000 * j
+        fuel.left = 4000
         fuel.y = random.randint(150, 650)
             
     if i > 3:
@@ -193,7 +199,8 @@ def update():
             meteor_x = get_x(meteor_1)      # Take x-coordinate of meteor_1
             stone_1.x = meteor_x + 450
             stone_1.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_1
-            score += 1      # Increase the score by 1
+            score += 5      # Increase the score by 5
+            count += 1      # Increase the count by 1
             
     if i > 4:
         # Move the stone_2 image to the left
@@ -203,8 +210,16 @@ def update():
             meteor_2_x = get_x(meteor_2)     # Take x-coordinate of meteor_2
             stone_2.x = meteor_2_x + 450
             stone_2.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_2
-            score += 1      # Increase the score by 1    
-        
+            score += 5       # Increase the score by 5
+            count += 1       # Increase the count by 1    
+ 
+    # Move the star image to the left
+    star.x -= speed
+
+    if star.right < 1:      # Reset the star image position
+        star.left = 2000
+        star.y = random.randint(150, 650) 
+               
     # Checkibg collision between the aircraft and the meteor
     if meteor_1.colliderect(aircraft):
       
@@ -225,8 +240,8 @@ def update():
         
     # Checking collision between the aircraft and fuel tank
     if fuel.colliderect(aircraft):
-        j += 1      # Increase the x-coordinate of the fuel tank
-        fuel.x = 4000 * j       # Reset the x-coordinate of the fuel tank
+             # Increase the x-coordinate of the fuel tank
+        fuel.x = 4000       # Reset the x-coordinate of the fuel tank
         fuel.y = random.randint(150, 650)       # Randomize the y-coordinate of the fuel tank
         if lives > 5:       # Increase the lives by 1 when lives are less than 5
             lives += 1  
@@ -247,7 +262,15 @@ def update():
         stone_2.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_2
         lives -= 1      # Increase the lives by 1 
         sounds.crashing.play()      # Play the crashing sound
-        
+
+    # Checking collision between the aircraft and star
+    if star.colliderect(aircraft):
+            # Increase the x-coordinate of the star
+        star.x = 4000       # Reset the x-coordinate of the star
+        star.y = random.randint(150, 650)       # Randomize the y-coordinate of the star
+        score += 10       # Increase the score by 10
+        sounds.fuel_crashing.play()        # Play the crashing sound 
+                
     # Move the aircraft up and down    
     if keyboard.down:
         if aircraft.y < 650:    # Limit bottom movement
