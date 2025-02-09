@@ -103,10 +103,7 @@ def draw():
             # Draw the images of the game
             background_1.draw()    
             background_2.draw() 
-            aircraft.draw() 
-             
-                   # Limit the movement of the aircraft
-                    
+            aircraft.draw()       
             meteor_1.draw()
             meteor_2.draw()           
             repair.draw()
@@ -184,8 +181,8 @@ def get_x(meteor):
         return meteor_1.x
     elif meteor == meteor_2:    # Take the x-coordinate ot meteor_2
         return meteor_2.x
-    if meteor == aircraft:      # Take the x-coordinate of the aircraft
-        return aircraft.x
+    
+    
 # Define the update function   
 def update():
     global lives, score, count, level, speed, i, start
@@ -203,14 +200,18 @@ def update():
         return
     
     # Increace the level with respect to scrore
-    if count == 3 * i:
+    if count == 10 * i and i < 3:
         i += 1 
-        level += 1      
-        if i < 4:       # Increace the speed with respect to scrore
-            speed = 5 * i
+        level += 1     
+    if count == 20 * i and i >= 3:
+        i += 1 
+        level += 1  
+           
+    if 1 < i < 4:       # Increace the speed with respect to scrore
+        speed = i * 6
             
-        else:           # Keeping the speed at a constant value
-            speed = 15
+    elif i >= 4:           # Keeping the speed at a constant value
+        speed = 15
     
     if i <= 5 :
         # Move the background_1 image to the left
@@ -232,7 +233,7 @@ def update():
     # Move the meteor_1 image to the left
     meteor_1.x -= speed
 
-    if meteor_1.right < 1 and get_x(aircraft) < 200:        # Reset the meteor_1 image position             
+    if meteor_1.right < 1 and aircraft.right < 600:        # Reset the meteor_1 image position             
         meteor_1.left = 1800
         meteor_1.y = random.randint(150, 650)     # Randomize the y-coordinate of the mateor_1
         score += 2      # Increase the score by 2
@@ -241,7 +242,7 @@ def update():
     # Move the meteor_2 image to the left
     meteor_2.x -= speed
 
-    if meteor_2.right < 1 and get_x(aircraft) < 200:       # Reset the meteor_2 image position             
+    if meteor_2.right < 1 and aircraft.right < 600:       # Reset the meteor_2 image position             
         meteor_2.left = 1800
         meteor_2.y = random.randint(150, 650)     # Randomize the y-coordinate of the mateor_2
         score += 2      # Increase the score by 2
@@ -250,7 +251,7 @@ def update():
     # Move the repair icon to the left
     repair.x -= speed
 
-    if repair.right < 1 and get_x(aircraft) < 200:      # Reset the repair icon position
+    if repair.right < 1:      # Reset the repair icon position
         repair.left = 10000
         repair.y = random.randint(150, 650)
             
@@ -258,7 +259,7 @@ def update():
         # Move the stone_1 image to the left
         stone_1.x -= speed
         
-        if stone_1.right < 1 and get_x(aircraft) < 200:       # Reset the stone_1 image position
+        if stone_1.right < 1 and aircraft.right < 600:       # Reset the stone_1 image position
             meteor_x = get_x(meteor_1)      # Take x-coordinate of meteor_1
             stone_1.x = meteor_x + 450
             stone_1.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_1
@@ -269,7 +270,7 @@ def update():
         # Move the stone_2 image to the left
         stone_2.x -= speed
         
-        if stone_2.right < 1 and get_x(aircraft) < 200:       # Reset the stone_2 image position
+        if stone_2.right < 1 and aircraft.right < 600:       # Reset the stone_2 image position
             meteor_2_x = get_x(meteor_2)     # Take x-coordinate of meteor_2
             stone_2.x = meteor_2_x + 450
             stone_2.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_2
@@ -279,12 +280,12 @@ def update():
     # Move the star image to the left
     star.x -= speed
 
-    if star.right < 1 and get_x(aircraft) < 200:      # Reset the star image position
+    if star.right < 1:     # Reset the star image position
         star.left = 3000
         star.y = random.randint(150, 650) 
                
     # Checkibg collision between the aircraft and the meteor
-    if meteor_1.colliderect(aircraft) and get_x(aircraft) < 200:
+    if meteor_1.colliderect(aircraft) and aircraft.right < 600:
       
         meteor_2_x = get_x(meteor_2)      # Take x coordinate of meteor_2 
         meteor_1.x = meteor_2_x + 900     # Reset the x-coordinate of mateor_1
@@ -293,7 +294,7 @@ def update():
         sounds.crashing_sound.play()      # Play crashing sound
         
     # Checkibg collision between the aircraft and the meteor2
-    if meteor_2.colliderect(aircraft) and get_x(aircraft) < 200:
+    if meteor_2.colliderect(aircraft) and aircraft.right < 600:
    
         meteor_x = get_x(meteor_1)      # Take x coordinate of meteor_1
         meteor_2.x = meteor_x + 900     # Reset the x-coordinate of mateor_2  
@@ -302,7 +303,7 @@ def update():
         sounds.crashing_sound.play()      # Play the crashing sound
         
     # Checking collision between the aircraft and fuel tank
-    if repair.colliderect(aircraft) and get_x(aircraft) < 200:
+    if repair.colliderect(aircraft):
            # Increase the x-coordinate of the fuel tank
         repair.x = 10000       # Reset the x-coordinate of the fuel tank
         repair.y = random.randint(150, 650)       # Randomize the y-coordinate of the fuel tank
@@ -311,7 +312,7 @@ def update():
         sounds.repair_sound.play()        # Play the crashing sound   
 
     # Checking collision between the aircraft and stone_1
-    if i > 3 and stone_1.colliderect(aircraft) and get_x(aircraft) < 200:
+    if i > 3 and stone_1.colliderect(aircraft) and aircraft.right < 600:
         meteor_x = get_x(meteor_1)      # Take x-coordinate of meteor_1 
         stone_1.x = meteor_x + 450      # Reset x-coordinate of stone_1
         stone_1.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_1
@@ -319,7 +320,7 @@ def update():
         sounds.crashing_sound.play()      # Play the crashing sound
     
     # Checking the collision between the aircraft and stone_2    
-    if i > 4 and stone_2.colliderect(aircraft) and get_x(aircraft) < 200:
+    if i > 4 and stone_2.colliderect(aircraft) and aircraft.right < 600:
         meteor2_x = get_x(meteor_2)     # Take x-coordinate of meteor_2
         stone_2.x = meteor2_x + 450     # reset x-coordinate of stone_2
         stone_2.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_2
@@ -327,7 +328,7 @@ def update():
         sounds.crashing_sound.play()      # Play the crashing sound
 
     # Checking collision between the aircraft and star
-    if star.colliderect(aircraft) and get_x(aircraft) < 200:
+    if star.colliderect(aircraft):
             # Increase the x-coordinate of the star
         star.x = 3000       # Reset the x-coordinate of the star
         star.y = random.randint(150, 650)       # Randomize the y-coordinate of the star
