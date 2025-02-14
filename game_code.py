@@ -203,11 +203,11 @@ def update():
     if count == 10 * i and i < 3:
         i += 1 
         level += 1     
-    if count == 4 * i and i >= 3:
+    if count == 15 * i and i >= 3:
         i += 1 
         level += 1  
            
-    if 1 < i < 20:       # Increace the speed with respect to scrore
+    if 1 < i < 4:       # Increace the speed with respect to scrore
         speed = i * 6
             
     elif i >= 4:           # Keeping the speed at a constant value
@@ -264,7 +264,6 @@ def update():
             stone_1.x = meteor_x + 450
             stone_1.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_1
             score += 5      # Increase the score by 5
-            count += 1      # Increase the count by 1
             
     if i > 4 :
         # Move the stone_2 image to the left
@@ -274,8 +273,7 @@ def update():
             meteor_2_x = get_x(meteor_2)     # Take x-coordinate of meteor_2
             stone_2.x = meteor_2_x + 450
             stone_2.y = random.randint(150, 650)        # Randomize the y-coordinate of the stone_2
-            score += 5       # Increase the score by 5
-            count += 1       # Increase the count by 1    
+            score += 5       # Increase the score by 5  
  
     # Move the star image to the left
     star.x -= speed
